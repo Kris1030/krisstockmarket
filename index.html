@@ -384,9 +384,15 @@
           <div class="panel-title" style="margin-bottom:10px;">VIX 恐慌指數</div>
           <div style="display:flex;align-items:baseline;gap:10px;">
             <div style="font-family:var(--mono);font-size:28px;font-weight:600;color:var(--warn);" id="vix-val">--</div>
-            <div style="font-family:var(--mono);font-size:12px;color:var(--text2);" id="vix-chg"></div>
+            <div style="font-family:var(--mono);font-size:12px;" id="vix-chg"></div>
           </div>
           <div style="font-size:10px;color:var(--text2);margin-top:4px;" id="vix-label">載入中...</div>
+          <div style="height:4px;background:var(--bg3);border-radius:2px;margin-top:10px;overflow:hidden;">
+            <div id="vix-bar" style="width:0%;height:100%;border-radius:2px;transition:width 0.6s ease;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text2);margin-top:3px;">
+            <span>平靜 10</span><span>恐慌 50+</span>
+          </div>
         </div>
       </div>
       <div class="panel">
@@ -413,6 +419,7 @@
 <script>
 // ── STATIC STOCK METADATA (prices come from API) ──
 const STOCK_META = {
+  // 台股
   '2330.TW': { name:'台積電', nameEn:'TSMC', market:'tw', sector:'晶圓代工' },
   '2303.TW': { name:'聯電', nameEn:'UMC', market:'tw', sector:'晶圓代工' },
   '2454.TW': { name:'聯發科', nameEn:'MediaTek', market:'tw', sector:'IC設計' },
@@ -421,6 +428,17 @@ const STOCK_META = {
   '3711.TW': { name:'日月光', nameEn:'ASE Group', market:'tw', sector:'封測' },
   '2337.TW': { name:'旺宏', nameEn:'Macronix', market:'tw', sector:'記憶體' },
   '3034.TW': { name:'聯詠', nameEn:'Novatek', market:'tw', sector:'IC設計' },
+  '2357.TW': { name:'華碩', nameEn:'ASUS', market:'tw', sector:'系統整合' },
+  '2382.TW': { name:'廣達', nameEn:'Quanta', market:'tw', sector:'伺服器' },
+  '2317.TW': { name:'鴻海', nameEn:'Foxconn', market:'tw', sector:'EMS' },
+  '3008.TW': { name:'大立光', nameEn:'Largan', market:'tw', sector:'光學' },
+  '2308.TW': { name:'台達電', nameEn:'Delta', market:'tw', sector:'電源' },
+  '6669.TW': { name:'緯穎', nameEn:'Wiwynn', market:'tw', sector:'伺服器' },
+  '2395.TW': { name:'研華', nameEn:'Advantech', market:'tw', sector:'工業電腦' },
+  '3231.TW': { name:'緯創', nameEn:'Wistron', market:'tw', sector:'EMS' },
+  '2345.TW': { name:'智邦', nameEn:'Accton', market:'tw', sector:'網通' },
+  '4938.TW': { name:'和碩', nameEn:'Pegatron', market:'tw', sector:'EMS' },
+  // 美股
   'NVDA':    { name:'輝達', nameEn:'NVIDIA', market:'us', sector:'GPU/AI' },
   'AMD':     { name:'超微', nameEn:'AMD', market:'us', sector:'CPU/GPU' },
   'INTC':    { name:'英特爾', nameEn:'Intel', market:'us', sector:'CPU' },
@@ -431,6 +449,19 @@ const STOCK_META = {
   'QCOM':    { name:'高通', nameEn:'Qualcomm', market:'us', sector:'IC設計' },
   'TSM':     { name:'台積電ADR', nameEn:'TSMC ADR', market:'us', sector:'晶圓代工' },
   'KLAC':    { name:'科磊', nameEn:'KLA Corp', market:'us', sector:'半導體設備' },
+  'AVGO':    { name:'博通', nameEn:'Broadcom', market:'us', sector:'IC設計' },
+  'ARM':     { name:'安謀', nameEn:'ARM Holdings', market:'us', sector:'IP核' },
+  'MRVL':    { name:'邁威爾', nameEn:'Marvell', market:'us', sector:'IC設計' },
+  'ON':      { name:'安森美', nameEn:'ON Semiconductor', market:'us', sector:'功率半導體' },
+  'TXN':     { name:'德州儀器', nameEn:'Texas Instruments', market:'us', sector:'類比IC' },
+  'NXPI':    { name:'恩智浦', nameEn:'NXP Semi', market:'us', sector:'汽車半導體' },
+  'MCHP':    { name:'微芯科技', nameEn:'Microchip Tech', market:'us', sector:'MCU' },
+  'STM':     { name:'意法半導體', nameEn:'STMicroelectronics', market:'us', sector:'功率半導體' },
+  'WOLF':    { name:'Wolfspeed', nameEn:'Wolfspeed', market:'us', sector:'碳化矽' },
+  'MPWR':    { name:'美普思', nameEn:'Monolithic Power', market:'us', sector:'電源IC' },
+  'ENTG':    { name:'恩特格里斯', nameEn:'Entegris', market:'us', sector:'半導體材料' },
+  'ONTO':    { name:'Onto Innovation', nameEn:'Onto Innovation', market:'us', sector:'半導體設備' },
+  'ACLS':    { name:'Axcelis', nameEn:'Axcelis Tech', market:'us', sector:'半導體設備' },
 };
 
 const INDEX_META = {
@@ -680,11 +711,34 @@ function renderSuggestList(q = '') {
   }).join('');
 }
 
+function renderVix() {
+  const vix = liveData.vix;
+  if (!vix || vix.price == null) return;
+  document.getElementById('vix-val').textContent = vix.price.toFixed(2);
+  const isUp = (vix.chg || 0) >= 0;
+  const chgEl = document.getElementById('vix-chg');
+  chgEl.textContent = vix.chg != null ? `${isUp?'▲':'▼'} ${Math.abs(vix.chg).toFixed(2)} (${vix.chgPct!=null?(isUp?'+':'')+vix.chgPct.toFixed(2)+'%':''})` : '';
+  chgEl.style.color = isUp ? 'var(--dn)' : 'var(--up)'; // VIX up = bad (red), VIX down = good (green)
+  const level = vix.price;
+  let label = '';
+  if (level < 12)       label = '極度貪婪，市場過熱';
+  else if (level < 20)  label = '市場平靜，情緒偏樂觀';
+  else if (level < 30)  label = '波動上升，注意風險';
+  else if (level < 40)  label = '市場恐慌，高波動';
+  else                  label = '極度恐慌，歷史高位';
+  document.getElementById('vix-label').textContent = label;
+  const barPct = Math.min((level / 50) * 100, 100).toFixed(0);
+  const barColor = level < 20 ? 'var(--up)' : level < 30 ? 'var(--warn)' : 'var(--dn)';
+  const barEl = document.getElementById('vix-bar');
+  if (barEl) { barEl.style.width = barPct + '%'; barEl.style.background = barColor; }
+}
+
 function renderAll() {
   renderIndexBar();
   renderStocks();
   renderHeatmap();
   renderForex();
+  renderVix();
   renderSidebar();
   renderWatchlistManage();
   renderNews();
