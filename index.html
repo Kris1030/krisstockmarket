@@ -449,16 +449,7 @@ const FOREX_META = {
   'CL=F':     { name:'WTI 原油' },
 };
 
-const NEWS_DATA = [
-  { title:'輝達 Blackwell B200 量產良率超預期，台積電 CoWoS 月產能目標上調至 3.5 萬片', tags:['ai','supply'], source:'Reuters', time:'1小時前', url:'#' },
-  { title:'ASML 宣布 2026 年 High-NA EUV 出貨量提升，三星、英特爾列優先客戶', tags:['supply','earnings'], source:'Bloomberg', time:'3小時前', url:'#' },
-  { title:'美商務部擴大對中出口管制範圍：14nm 以下製程設備納入限制清單', tags:['policy'], source:'WSJ', time:'5小時前', url:'#' },
-  { title:'台積電法說會：2024 全年營收預計成長逾 25%，AI 相關營收佔比達三成', tags:['earnings','ai'], source:'工商時報', time:'6小時前', url:'#' },
-  { title:'SK海力士 HBM3E 12層堆疊量產，供貨 NVIDIA H200 GPU', tags:['memory','supply'], source:'Korea Times', time:'8小時前', url:'#' },
-  { title:'聯發科天璣 9400 採用台積電 3nm 製程，旗艦手機效能提升 40%', tags:['ai'], source:'DigiTimes', time:'10小時前', url:'#' },
-  { title:'Intel 18A 製程良率問題傳出，代工客戶評估轉移至台積電 2nm', tags:['foundry','policy'], source:'The Information', time:'12小時前', url:'#' },
-  { title:'日本半導體補貼計畫追加 1.5 兆日圓，Rapidus 2nm 試產進程加速', tags:['policy','supply'], source:'日本経済新聞', time:'14小時前', url:'#' },
-];
+let NEWS_DATA = []; // populated from /api/news
 
 // ── STATE ──
 let liveData = { tw:[], us:[], indices:[], forex:[] };
@@ -469,18 +460,26 @@ let currentNewsFilter = 'all';
 // ── FETCH ──
 async function fetchAll() {
   document.getElementById('error-box').style.display = 'none';
-  try {
-    const res = await fetch('/api/quotes');
-    if (!res.ok) throw new Error('API error');
-    const data = await res.json();
-    liveData = data;
-    document.getElementById('last-update').textContent = new Date(data.updatedAt).toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit' });
-    renderAll();
-  } catch (e) {
+
+  // Fetch quotes + news in parallel
+  const [quotesResult, newsResult] = await Promise.allSettled([
+    fetch('/api/quotes').then(r => r.ok ? r.json() : Promise.reject()),
+    fetch('/api/news').then(r => r.ok ? r.json() : Promise.reject()),
+  ]);
+
+  if (quotesResult.status === 'fulfilled') {
+    liveData = quotesResult.value;
+    document.getElementById('last-update').textContent =
+      new Date(liveData.updatedAt).toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit' });
+  } else {
     document.getElementById('error-box').style.display = 'flex';
-    // Still render with whatever we have (or empty)
-    renderAll();
   }
+
+  if (newsResult.status === 'fulfilled' && newsResult.value.articles?.length) {
+    NEWS_DATA = newsResult.value.articles;
+  }
+
+  renderAll();
 }
 
 // ── HELPERS ──
