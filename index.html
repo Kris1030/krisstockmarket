@@ -366,10 +366,7 @@
         <span style="color:var(--text2);">分析市場資料中...</span>
       </div>
       <div class="ai-signals" id="ai-signals">
-        <div class="signal-chip"><div class="sig-dot" style="background:var(--up);"></div>台積電突破月線壓力，外資連買 3 日</div>
-        <div class="signal-chip"><div class="sig-dot" style="background:var(--up);"></div>NVDA Blackwell 法說前機構上調目標價至 $1,200</div>
-        <div class="signal-chip"><div class="sig-dot" style="background:var(--warn);"></div>記憶體庫存去化進度未如預期，DRAM 觀望</div>
-        <div class="signal-chip"><div class="sig-dot" style="background:var(--dn);"></div>美中科技戰升溫，中概供應鏈留意下行風險</div>
+        <!-- JS rendered dynamically -->
       </div>
     </div>
 
@@ -667,7 +664,7 @@ function renderWatchlistManage() {
         <span style="color:var(--text2);font-size:14px;cursor:grab;">⠿</span>
         <span class="wl-mi-ticker">${t.replace('.TW','')}</span>
         <span class="wl-mi-name">${meta.name || t}</span>
-        ${live ? `<span style="font-family:var(--mono);font-size:11px;${isUp?'color:var(--up)':'color:var(--dn)'};">${isUp?'+':''}${live.chgPct?.toFixed(2)}%</span>` : ''}
+        ${live ? `<span style="font-family:var(--mono);font-size:11px;${isUp?'color:var(--up)':'color:var(--dn)'};">${isUp?'+':''}${live.chgPct != null ? live.chgPct.toFixed(2) : '--'}%</span>` : ''}
         <button class="wl-mi-del" onclick="removeFromWatchlist('${t}')">✕</button>
       </div>`;
   }).join('');
@@ -718,6 +715,51 @@ function renderSuggestList(q = '') {
   }).join('');
 }
 
+function renderSignals() {
+  const el = document.getElementById('ai-signals');
+  if (!el) return;
+  const all = [...liveData.tw, ...liveData.us];
+  if (!all.length) return;
+
+  const signals = [];
+  const up   = all.filter(s => (s.chgPct||0) > 1.5).sort((a,b) => b.chgPct - a.chgPct);
+  const down = all.filter(s => (s.chgPct||0) < -1.5).sort((a,b) => a.chgPct - b.chgPct);
+  const avg  = all.reduce((s,x) => s+(x.chgPct||0), 0) / all.length;
+
+  // Top gainer signal
+  if (up.length > 0) {
+    const meta = STOCK_META[up[0].ticker] || {};
+    const name = meta.name || up[0].ticker;
+    signals.push({ color:'var(--up)', text:`${name} 今日漲幅 +${up[0].chgPct.toFixed(1)}%，領漲半導體板塊` });
+  }
+  // Second gainer
+  if (up.length > 1) {
+    const meta = STOCK_META[up[1].ticker] || {};
+    signals.push({ color:'var(--up)', text:`${meta.name||up[1].ticker} 同步走強（+${up[1].chgPct.toFixed(1)}%），買氣延伸` });
+  }
+  // Top loser
+  if (down.length > 0) {
+    const meta = STOCK_META[down[0].ticker] || {};
+    const name = meta.name || down[0].ticker;
+    signals.push({ color:'var(--dn)', text:`${name} 今日回落 ${down[0].chgPct.toFixed(1)}%，短線留意支撐` });
+  }
+  // Overall sentiment
+  if (avg >= 1) signals.push({ color:'var(--up)', text:`板塊整體偏多（均漲 +${avg.toFixed(1)}%），資金動能充足` });
+  else if (avg <= -1) signals.push({ color:'var(--dn)', text:`板塊整體偏弱（均跌 ${avg.toFixed(1)}%），觀望情緒升溫` });
+  else signals.push({ color:'var(--warn)', text:`板塊震盪整理（均 ${avg>=0?'+':''}${avg.toFixed(1)}%），多空拉鋸注意方向` });
+
+  // VIX signal
+  if (liveData.vix?.price) {
+    const v = liveData.vix.price;
+    if (v > 25) signals.push({ color:'var(--dn)', text:`VIX ${v.toFixed(1)} 偏高，市場恐慌情緒升溫，操作宜謹慎` });
+    else if (v < 15) signals.push({ color:'var(--up)', text:`VIX ${v.toFixed(1)} 低位，市場情緒穩定，波動風險較低` });
+  }
+
+  el.innerHTML = signals.slice(0, 4).map(s =>
+    `<div class="signal-chip"><div class="sig-dot" style="background:${s.color};"></div><span>${s.text}</span></div>`
+  ).join('');
+}
+
 function renderVix() {
   const vix = liveData.vix;
   if (!vix || vix.price == null) return;
@@ -746,6 +788,7 @@ function renderAll() {
   renderHeatmap();
   renderForex();
   renderVix();
+  renderSignals();
   renderSidebar();
   renderWatchlistManage();
   renderNews();
