@@ -24,14 +24,14 @@ async function finnhubQuote(symbol) {
 }
 
 async function finnhubForex(from, to) {
-  const symbol = `${from}${to}`;
-  const url = `https://finnhub.io/api/v1/forex/rates?base=${from}&token=${FINNHUB_KEY}`;
-  const r = await fetch(url);
+  // Use OANDA format for real-time forex rates
+  const symbol = `OANDA:${from}_${to}`;
+  const url = `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(symbol)}&token=${FINNHUB_KEY}`;
+  const r = await fetch(url, { headers:{ 'X-Finnhub-Token': FINNHUB_KEY } });
   if (!r.ok) return null;
   const d = await r.json();
-  const rate = d?.quote?.[to];
-  if (!rate) return null;
-  return { price: rate, chg: null, chgPct: null };
+  if (!d.c || d.c === 0) return null;
+  return { price: d.c, chg: d.d, chgPct: d.dp };
 }
 
 // TWSE fallback for TW stocks
@@ -95,14 +95,14 @@ export default async function handler(req, res) {
     );
   }
 
-  // Gold & Oil via Finnhub commodities
+  /// Gold & Oil
   tasks.push(
-    finnhubQuote('OANDA:XAU_USD').then(q => {
+    finnhubForex('XAU','USD').then(q => {
       if (q) result.forex.push({ ticker:'GC=F', name:'黃金 XAU/USD', ...q });
     }).catch(()=>{})
   );
   tasks.push(
-    finnhubQuote('OANDA:BCO_USD').then(q => {
+    finnhubForex('XBR','USD').then(q => {
       if (q) result.forex.push({ ticker:'CL=F', name:'布蘭特原油', ...q });
     }).catch(()=>{})
   );
