@@ -28,27 +28,19 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { background: var(--bg0); color: var(--text0); font-family: var(--sans); font-size: 14px; }
   body { min-height: 100vh; }
-  
-  /* ── Scrollbar ── */
   ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
 
-  /* ── Layout ── */
   .app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
-  
-  /* ── Sidebar ── */
+
+  /* Sidebar */
   .sidebar {
-    background: var(--bg1);
-    border-right: 1px solid var(--border);
+    background: var(--bg1); border-right: 1px solid var(--border);
     display: flex; flex-direction: column;
-    padding: 0;
     position: sticky; top: 0; height: 100vh; overflow-y: auto;
   }
-  .sidebar-logo {
-    padding: 20px 18px 16px;
-    border-bottom: 1px solid var(--border);
-  }
+  .sidebar-logo { padding: 20px 18px 16px; border-bottom: 1px solid var(--border); }
   .logo-main { font-family: var(--mono); font-size: 15px; font-weight: 600; color: var(--accent); letter-spacing: 0.04em; }
   .logo-sub { font-size: 10px; color: var(--text2); letter-spacing: 0.1em; margin-top: 2px; text-transform: uppercase; }
   .sidebar-section { padding: 14px 18px 8px; }
@@ -56,46 +48,38 @@
   .nav-item {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 10px; border-radius: 6px; cursor: pointer;
-    font-size: 12px; color: var(--text1); transition: all 0.15s;
-    margin-bottom: 2px;
+    font-size: 12px; color: var(--text1); transition: all 0.15s; margin-bottom: 2px;
   }
   .nav-item:hover { background: var(--bg3); color: var(--text0); }
   .nav-item.active { background: rgba(77,166,255,0.12); color: var(--accent); }
-  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-  
-  /* Watchlist in sidebar */
   .watchlist-items { padding: 0 12px 12px; }
   .wl-row {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 7px 6px; border-radius: 5px; cursor: pointer;
-    transition: background 0.15s;
+    padding: 7px 6px; border-radius: 5px; cursor: pointer; transition: background 0.15s;
   }
   .wl-row:hover { background: var(--bg3); }
   .wl-ticker { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--text0); }
   .wl-name { font-size: 10px; color: var(--text2); margin-top: 1px; }
   .wl-pct { font-family: var(--mono); font-size: 11px; }
-  .up { color: var(--up); }
-  .dn { color: var(--dn); }
-  .neu { color: var(--text1); }
-  
+  .up { color: var(--up); } .dn { color: var(--dn); }
   .add-stock-btn {
     margin: 0 12px 12px;
     display: flex; align-items: center; gap: 6px;
     padding: 7px 10px; border-radius: 6px; cursor: pointer;
     border: 1px dashed var(--border); color: var(--text2);
-    font-size: 11px; background: none; width: calc(100% - 24px);
-    transition: all 0.15s;
+    font-size: 11px; background: none; width: calc(100% - 24px); transition: all 0.15s;
   }
   .add-stock-btn:hover { border-color: var(--accent); color: var(--accent); }
-  
-  /* ── Main content ── */
-  .main { padding: 24px; overflow-y: auto; }
-  
-  /* ── Top bar ── */
-  .topbar {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 20px;
+  .edit-badge {
+    font-size: 9px; padding: 3px 8px; border-radius: 4px;
+    background: rgba(255,215,64,0.12); border: 1px solid rgba(255,215,64,0.25);
+    color: var(--warn); letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s;
   }
+  .edit-badge:hover { background: rgba(255,215,64,0.2); }
+
+  /* Main */
+  .main { padding: 24px; overflow-y: auto; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .page-title { font-size: 20px; font-weight: 700; color: var(--text0); }
   .topbar-right { display: flex; align-items: center; gap: 12px; }
   .live-badge {
@@ -107,55 +91,61 @@
   .live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--up); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
   .time-display { font-family: var(--mono); font-size: 12px; color: var(--text2); }
-  
-  /* ── Cards/panels ── */
-  .panel {
-    background: var(--bg1);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
+
+  /* Loading / Error */
+  .loading-overlay {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px 0; gap: 14px; color: var(--text2);
   }
+  .spinner {
+    width: 28px; height: 28px; border: 2px solid var(--bg3);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-box {
+    background: rgba(255,82,82,0.08); border: 1px solid rgba(255,82,82,0.25);
+    border-radius: 8px; padding: 14px 18px; font-size: 12px; color: #ff7070;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .retry-btn {
+    margin-left: auto; font-size: 11px; padding: 4px 12px; border-radius: 5px;
+    background: none; border: 1px solid rgba(255,82,82,0.4); color: #ff7070;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .retry-btn:hover { background: rgba(255,82,82,0.12); }
+
+  /* Panel */
+  .panel { background: var(--bg1); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
   .panel-header {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
     display: flex; justify-content: space-between; align-items: center;
   }
   .panel-title { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text1); }
   .panel-body { padding: 14px 16px; }
-  
-  /* ── Index row ── */
+
+  /* Index bar */
   .index-bar {
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
-    background: var(--border);
-    border-radius: 10px; overflow: hidden;
-    margin-bottom: 20px;
+    background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px;
   }
-  .idx-cell {
-    background: var(--bg1);
-    padding: 14px 16px;
-    cursor: pointer; transition: background 0.15s;
-  }
+  .idx-cell { background: var(--bg1); padding: 14px 16px; cursor: pointer; transition: background 0.15s; }
   .idx-cell:hover { background: var(--bg2); }
-  .idx-name { font-size: 10px; color: var(--text2); margin-bottom: 6px; letter-spacing: 0.04em; }
+  .idx-name { font-size: 10px; color: var(--text2); margin-bottom: 6px; }
   .idx-val { font-family: var(--mono); font-size: 16px; font-weight: 600; color: var(--text0); }
   .idx-chg { font-family: var(--mono); font-size: 11px; margin-top: 3px; }
-  .idx-sparkline { margin-top: 8px; }
-  
-  /* ── Main grid ── */
+  .idx-loading { font-family: var(--mono); font-size: 13px; color: var(--text2); }
+
+  /* Stock cards */
   .main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 16px; margin-bottom: 16px; }
-  
-  /* ── Stock cards ── */
   .stocks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .stock-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 8px; padding: 14px;
-    cursor: pointer; transition: all 0.2s; position: relative;
-    overflow: hidden;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px; cursor: pointer; transition: all 0.2s;
+    position: relative; overflow: hidden;
   }
   .stock-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    content:''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
     opacity: 0; transition: opacity 0.2s;
   }
   .stock-card.up-card::before { background: var(--up); }
@@ -166,264 +156,153 @@
   .card-name { font-size: 10px; color: var(--text2); margin: 2px 0 8px; }
   .card-price { font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--text0); }
   .card-change { font-family: var(--mono); font-size: 11px; margin-top: 4px; }
-  .card-vol { font-size: 10px; color: var(--text2); margin-top: 6px; }
-  .card-spark { margin-top: 10px; }
-  .card-tag {
-    display: inline-block; font-size: 9px; padding: 2px 6px; border-radius: 3px;
-    margin-bottom: 6px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
-  }
+  .card-tag { display: inline-block; font-size: 9px; padding: 2px 6px; border-radius: 3px; margin-bottom: 6px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
   .tag-tw { background: rgba(77,166,255,0.12); color: var(--accent); }
   .tag-us { background: rgba(0,212,170,0.12); color: var(--accent2); }
-  
-  /* ── Heatmap ── */
+
+  /* Heatmap */
   .heatmap-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-  .heat-cell {
-    border-radius: 6px; padding: 9px 6px; text-align: center;
-    cursor: pointer; transition: opacity 0.15s;
-  }
+  .heat-cell { border-radius: 6px; padding: 9px 6px; text-align: center; cursor: pointer; transition: opacity 0.15s; }
   .heat-cell:hover { opacity: 0.8; }
   .heat-ticker { font-family: var(--mono); font-size: 10px; font-weight: 600; }
-  .heat-name { font-size: 9px; margin: 1px 0; opacity: 0.7; }
   .heat-pct { font-family: var(--mono); font-size: 10px; margin-top: 2px; }
-  .h-up3 { background: #0d3320; color: #69f0ae; }
-  .h-up2 { background: #0a2b1a; color: #4caf50; }
-  .h-up1 { background: #081f13; color: #388e3c; }
-  .h-n { background: var(--bg3); color: var(--text2); }
-  .h-dn1 { background: #1f0a0a; color: #c62828; }
-  .h-dn2 { background: #2b0d0d; color: #ef5350; }
-  .h-dn3 { background: #3a1010; color: #ff5252; }
-  
-  /* ── News ── */
-  .news-list {}
-  .news-item {
-    padding: 12px 0; border-bottom: 1px solid var(--border);
-    cursor: pointer; transition: opacity 0.15s;
-  }
-  .news-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .news-item:hover { opacity: 0.75; }
-  .news-tags { display: flex; gap: 5px; margin-bottom: 6px; flex-wrap: wrap; }
-  .ntag {
-    font-size: 9px; padding: 2px 7px; border-radius: 3px;
-    font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
-  }
-  .ntag-ai { background: rgba(77,166,255,0.12); color: var(--accent); }
-  .ntag-supply { background: rgba(0,212,170,0.12); color: var(--accent2); }
-  .ntag-policy { background: rgba(255,82,82,0.12); color: #ff7070; }
-  .ntag-earnings { background: rgba(255,215,64,0.12); color: var(--warn); }
-  .ntag-memory { background: rgba(170,100,255,0.12); color: #bb86fc; }
-  .ntag-foundry { background: rgba(255,150,50,0.12); color: #ffb74d; }
-  .news-title { font-size: 12px; line-height: 1.6; color: var(--text0); }
-  .news-meta { font-family: var(--mono); font-size: 10px; color: var(--text2); margin-top: 5px; display: flex; gap: 10px; }
-  
-  /* ── Filter tabs ── */
+  .h-up3 { background:#0d3320; color:#69f0ae; } .h-up2 { background:#0a2b1a; color:#4caf50; }
+  .h-up1 { background:#081f13; color:#388e3c; } .h-n { background:var(--bg3); color:var(--text2); }
+  .h-dn1 { background:#1f0a0a; color:#c62828; } .h-dn2 { background:#2b0d0d; color:#ef5350; }
+  .h-dn3 { background:#3a1010; color:#ff5252; }
+
+  /* News */
   .filter-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
   .ftab {
     font-size: 10px; padding: 4px 10px; border-radius: 20px; cursor: pointer;
-    border: 1px solid var(--border); color: var(--text2); background: none;
-    transition: all 0.15s; letter-spacing: 0.04em;
+    border: 1px solid var(--border); color: var(--text2); background: none; transition: all 0.15s;
   }
   .ftab:hover { border-color: var(--border-hi); color: var(--text0); }
   .ftab.active { background: rgba(77,166,255,0.15); border-color: var(--accent); color: var(--accent); }
-  
-  /* ── AI summary ── */
+  .news-item { padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: opacity 0.15s; }
+  .news-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .news-item:hover { opacity: 0.75; }
+  .news-tags { display: flex; gap: 5px; margin-bottom: 6px; flex-wrap: wrap; }
+  .ntag { font-size: 9px; padding: 2px 7px; border-radius: 3px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+  .ntag-ai { background:rgba(77,166,255,0.12); color:var(--accent); }
+  .ntag-supply { background:rgba(0,212,170,0.12); color:var(--accent2); }
+  .ntag-policy { background:rgba(255,82,82,0.12); color:#ff7070; }
+  .ntag-earnings { background:rgba(255,215,64,0.12); color:var(--warn); }
+  .ntag-memory { background:rgba(170,100,255,0.12); color:#bb86fc; }
+  .ntag-foundry { background:rgba(255,150,50,0.12); color:#ffb74d; }
+  .news-title { font-size: 12px; line-height: 1.6; color: var(--text0); }
+  .news-meta { font-family: var(--mono); font-size: 10px; color: var(--text2); margin-top: 5px; display: flex; gap: 10px; }
+
+  /* AI summary */
   .ai-summary-box {
     background: linear-gradient(135deg, rgba(77,166,255,0.05), rgba(0,212,170,0.03));
-    border: 1px solid rgba(77,166,255,0.2);
-    border-radius: 10px; padding: 16px;
-    margin-bottom: 16px;
+    border: 1px solid rgba(77,166,255,0.2); border-radius: 10px; padding: 16px; margin-bottom: 16px;
   }
-  .ai-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 10px; font-weight: 500;
-  }
-  .ai-icon { font-size: 12px; }
+  .ai-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; font-weight: 500; }
   .ai-text { font-size: 12px; line-height: 1.8; color: #a8c4e0; }
   .ai-signals { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
   .signal-chip {
     display: flex; align-items: flex-start; gap: 7px;
     background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 6px; padding: 8px 10px;
-    font-size: 11px; color: var(--text1); line-height: 1.5;
+    border-radius: 6px; padding: 8px 10px; font-size: 11px; color: var(--text1); line-height: 1.5;
   }
   .sig-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-  
-  /* ── Bottom row ── */
+
+  /* Bottom grid */
   .bottom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-  
-  /* ── Watchlist manage panel ── */
-  .wl-manage { }
-  .wl-manage-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 7px 0; border-bottom: 1px solid var(--border);
-    font-size: 12px;
-  }
+  .forex-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .forex-row:last-child { border-bottom: none; }
+  .forex-pair { font-family: var(--mono); color: var(--warn); font-size: 11px; }
+  .forex-val { font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--text0); }
+
+  /* Watchlist manage */
+  .wl-manage-item { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
   .wl-manage-item:last-child { border-bottom: none; }
-  .wl-drag { color: var(--text2); cursor: grab; font-size: 14px; }
-  .wl-mi-ticker { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--text0); min-width: 60px; }
+  .wl-mi-ticker { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--text0); min-width: 65px; }
   .wl-mi-name { color: var(--text2); flex: 1; font-size: 11px; }
   .wl-mi-del {
     width: 20px; height: 20px; border-radius: 4px; background: none;
     border: 1px solid transparent; color: var(--text2); cursor: pointer;
-    font-size: 12px; display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
+    font-size: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
   }
   .wl-mi-del:hover { border-color: var(--dn); color: var(--dn); background: rgba(255,82,82,0.08); }
-  
-  /* ── Add stock modal ── */
+
+  /* Modal */
   .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
     display: flex; align-items: center; justify-content: center;
     z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s;
   }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--bg1); border: 1px solid var(--border-hi);
-    border-radius: 12px; padding: 24px; width: 480px; max-width: 95vw;
-  }
+  .modal { background: var(--bg1); border: 1px solid var(--border-hi); border-radius: 12px; padding: 24px; width: 480px; max-width: 95vw; }
   .modal-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
   .modal-search {
     width: 100%; background: var(--bg0); border: 1px solid var(--border);
     border-radius: 8px; padding: 10px 14px; font-size: 13px;
-    color: var(--text0); font-family: var(--mono); outline: none;
-    margin-bottom: 12px; transition: border-color 0.15s;
+    color: var(--text0); font-family: var(--mono); outline: none; margin-bottom: 12px; transition: border-color 0.15s;
   }
   .modal-search:focus { border-color: var(--accent); }
   .suggest-list { max-height: 260px; overflow-y: auto; }
-  .suggest-item {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 9px 10px; border-radius: 6px; cursor: pointer;
-    transition: background 0.12s;
-  }
+  .suggest-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 10px; border-radius: 6px; cursor: pointer; transition: background 0.12s; }
   .suggest-item:hover { background: var(--bg3); }
   .sug-ticker { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--accent); min-width: 80px; }
   .sug-name { font-size: 12px; color: var(--text1); flex: 1; }
   .sug-mkt { font-size: 10px; color: var(--text2); }
   .sug-added { font-size: 10px; color: var(--up); }
   .modal-footer { margin-top: 16px; display: flex; justify-content: flex-end; gap: 8px; }
-  .btn {
-    padding: 8px 18px; border-radius: 6px; font-size: 12px; cursor: pointer;
-    border: 1px solid var(--border); background: none; color: var(--text1);
-    transition: all 0.15s; font-family: var(--sans);
-  }
+  .btn { padding: 8px 18px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid var(--border); background: none; color: var(--text1); transition: all 0.15s; font-family: var(--sans); }
   .btn:hover { background: var(--bg3); color: var(--text0); }
   .btn-primary { background: rgba(77,166,255,0.15); border-color: var(--accent); color: var(--accent); }
   .btn-primary:hover { background: rgba(77,166,255,0.25); }
-  
-  /* ── Forex ── */
-  .forex-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px;
-  }
-  .forex-row:last-child { border-bottom: none; }
-  .forex-pair { font-family: var(--mono); color: var(--warn); font-size: 11px; }
-  .forex-val { font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--text0); }
-  
-  /* ── Responsive ── */
-  @media (max-width: 1200px) {
-    .stocks-grid { grid-template-columns: repeat(2, 1fr); }
-    .main-grid { grid-template-columns: 1fr; }
-    .bottom-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 900px) {
-    .app { grid-template-columns: 1fr; }
-    .sidebar { position: relative; height: auto; }
-    .index-bar { grid-template-columns: repeat(3, 1fr); }
-    .bottom-grid { grid-template-columns: 1fr; }
-    .ai-signals { grid-template-columns: 1fr; }
-  }
 
-  /* ── Animations ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .fade-up { animation: fadeUp 0.4s ease both; }
-  .delay-1 { animation-delay: 0.05s; }
-  .delay-2 { animation-delay: 0.1s; }
-  .delay-3 { animation-delay: 0.15s; }
-  .delay-4 { animation-delay: 0.2s; }
-  .delay-5 { animation-delay: 0.25s; }
-  
   .section-divider { height: 1px; background: var(--border); margin: 16px 0; }
+  .flex-between { display: flex; justify-content: space-between; align-items: center; }
   .text-muted { color: var(--text2); }
   .text-sm { font-size: 11px; }
-  .flex-between { display: flex; justify-content: space-between; align-items: center; }
-  .gap-8 { gap: 8px; }
-  
-  /* Edit mode toggle */
-  .edit-badge {
-    font-size: 9px; padding: 3px 8px; border-radius: 4px;
-    background: rgba(255,215,64,0.12); border: 1px solid rgba(255,215,64,0.25);
-    color: var(--warn); letter-spacing: 0.06em; cursor: pointer;
-    transition: all 0.15s;
-  }
-  .edit-badge:hover { background: rgba(255,215,64,0.2); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-up { animation: fadeUp 0.4s ease both; }
+  .delay-1 { animation-delay: 0.05s; } .delay-2 { animation-delay: 0.1s; }
+  .delay-3 { animation-delay: 0.15s; } .delay-4 { animation-delay: 0.2s; }
+
+  @media (max-width: 1100px) { .stocks-grid { grid-template-columns: repeat(2,1fr); } .main-grid { grid-template-columns: 1fr; } .bottom-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 800px) { .app { grid-template-columns: 1fr; } .sidebar { position: relative; height: auto; } .index-bar { grid-template-columns: repeat(3,1fr); } .ai-signals { grid-template-columns: 1fr; } .bottom-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-
 <div class="app">
 
-  <!-- ── SIDEBAR ── -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-main">⬡ CHIP RADAR</div>
       <div class="logo-sub">晶片雷達 · 半導體情報</div>
     </div>
-
     <div class="sidebar-section">
       <div class="sidebar-label">導航</div>
-      <div class="nav-item active" onclick="navigate('dashboard')">
-        <span style="font-size:14px;">▦</span> 總覽儀表板
-      </div>
-      <div class="nav-item" onclick="navigate('news')">
-        <span style="font-size:14px;">◈</span> 新聞中心
-      </div>
-      <div class="nav-item" onclick="navigate('heatmap')">
-        <span style="font-size:14px;">◫</span> 類股熱力圖
-      </div>
-      <div class="nav-item" onclick="navigate('calendar')">
-        <span style="font-size:14px;">◷</span> 法說行事曆
-      </div>
+      <div class="nav-item active">▦ 總覽儀表板</div>
     </div>
-
     <div class="sidebar-section">
       <div class="flex-between">
         <div class="sidebar-label">自選股</div>
-        <span class="edit-badge" onclick="toggleEditMode()" id="edit-toggle">編輯</span>
+        <span class="edit-badge" id="edit-toggle" onclick="toggleEditMode()">編輯</span>
       </div>
     </div>
-
-    <div class="watchlist-items" id="sidebar-watchlist">
-      <!-- JS rendered -->
-    </div>
-
-    <button class="add-stock-btn" onclick="openModal()">
-      <span>＋</span> 新增股票
-    </button>
-
+    <div class="watchlist-items" id="sidebar-watchlist"></div>
+    <button class="add-stock-btn" onclick="openModal()">＋ 新增股票</button>
     <div style="flex:1;"></div>
-    <div style="padding: 14px 18px; border-top: 1px solid var(--border);">
+    <div style="padding:14px 18px; border-top:1px solid var(--border);">
       <div class="text-sm text-muted">資料來源</div>
-      <div style="font-size:10px; color: var(--text2); margin-top:4px; line-height:1.6;">
-        Yahoo Finance · Google News<br>
-        TWSE · 鉅亨網 · Bloomberg
-      </div>
-      <div style="font-size:10px; color: var(--text2); margin-top:8px;">
-        最後更新：<span id="last-update">--</span>
-      </div>
+      <div style="font-size:10px; color:var(--text2); margin-top:4px; line-height:1.7;">Yahoo Finance · Google News<br>TWSE · 鉅亨網</div>
+      <div style="font-size:10px; color:var(--text2); margin-top:8px;">最後更新：<span id="last-update">載入中...</span></div>
     </div>
   </aside>
 
-  <!-- ── MAIN ── -->
+  <!-- MAIN -->
   <main class="main">
-
-    <!-- Topbar -->
     <div class="topbar fade-up">
       <div>
-        <div class="page-title" id="page-title">今日總覽</div>
+        <div class="page-title">今日總覽</div>
         <div class="text-sm text-muted" id="page-subtitle" style="margin-top:3px;"></div>
       </div>
       <div class="topbar-right">
@@ -432,164 +311,147 @@
       </div>
     </div>
 
-    <!-- Index bar -->
-    <div class="index-bar fade-up delay-1" id="index-bar">
-      <!-- JS rendered -->
+    <!-- Error banner -->
+    <div class="error-box" id="error-box" style="display:none;">
+      ⚠ 資料載入失敗，顯示上次快取資料。
+      <button class="retry-btn" onclick="fetchAll()">重試</button>
     </div>
 
-    <!-- Main grid: stocks + news -->
-    <div class="main-grid">
+    <!-- Index bar -->
+    <div class="index-bar fade-up delay-1" id="index-bar">
+      <div class="idx-cell" style="grid-column:span 5;">
+        <div class="loading-overlay"><div class="spinner"></div><span>載入指數資料中...</span></div>
+      </div>
+    </div>
 
-      <!-- Left: stock cards -->
+    <!-- Stocks + News -->
+    <div class="main-grid">
       <div>
         <div class="flex-between" style="margin-bottom:12px;">
           <div class="panel-title">重點半導體股</div>
           <div class="filter-tabs" id="market-tabs">
-            <button class="ftab active" onclick="filterMarket('all', this)">全部</button>
-            <button class="ftab" onclick="filterMarket('tw', this)">台股</button>
-            <button class="ftab" onclick="filterMarket('us', this)">美股</button>
-            <button class="ftab" onclick="filterMarket('watchlist', this)">自選</button>
+            <button class="ftab active" onclick="filterMarket('all',this)">全部</button>
+            <button class="ftab" onclick="filterMarket('tw',this)">台股</button>
+            <button class="ftab" onclick="filterMarket('us',this)">美股</button>
+            <button class="ftab" onclick="filterMarket('watchlist',this)">自選</button>
           </div>
         </div>
         <div class="stocks-grid fade-up delay-2" id="stocks-grid">
-          <!-- JS rendered -->
+          <div style="grid-column:span 3; padding:40px 0;">
+            <div class="loading-overlay"><div class="spinner"></div><span>載入股票資料中...</span></div>
+          </div>
         </div>
       </div>
 
-      <!-- Right: news -->
       <div class="panel fade-up delay-3">
         <div class="panel-header">
           <div class="panel-title">今日新聞</div>
           <div class="filter-tabs" id="news-tabs">
-            <button class="ftab active" onclick="filterNews('all', this)">全部</button>
-            <button class="ftab" onclick="filterNews('ai', this)">AI</button>
-            <button class="ftab" onclick="filterNews('supply', this)">供應鏈</button>
-            <button class="ftab" onclick="filterNews('policy', this)">政策</button>
+            <button class="ftab active" onclick="filterNews('all',this)">全部</button>
+            <button class="ftab" onclick="filterNews('ai',this)">AI</button>
+            <button class="ftab" onclick="filterNews('supply',this)">供應鏈</button>
+            <button class="ftab" onclick="filterNews('policy',this)">政策</button>
           </div>
         </div>
         <div class="panel-body" style="max-height:460px; overflow-y:auto;">
-          <div class="news-list" id="news-list">
-            <!-- JS rendered -->
-          </div>
+          <div id="news-list"></div>
         </div>
       </div>
     </div>
 
     <!-- AI Summary -->
     <div class="ai-summary-box fade-up delay-4">
-      <div class="ai-badge"><span class="ai-icon">◈</span> AI 每日市場摘要</div>
-      <div class="ai-text" id="ai-summary-text">
-        今日半導體板塊整體偏多，費城半導體指數領漲科技股。AI 伺服器需求持續拉升先進封裝需求，台積電 CoWoS 與 SoIC 產能持續滿載。NVDA Blackwell 平台量產良率優於預期，帶動整體供應鏈情緒回溫。記憶體族群受庫存週期影響，HBM 需求強勁但 DRAM 消費型去化仍需時間。政策面需關注美中出口管制進展，ASML EUV 設備交付時程為中長線關鍵變數。
-      </div>
+      <div class="ai-badge">◈ AI 每日市場摘要</div>
+      <div class="ai-text" id="ai-summary-text">今日半導體板塊整體偏多，費城半導體指數領漲科技股。AI 伺服器需求持續拉升先進封裝需求，台積電 CoWoS 與 SoIC 產能持續滿載。NVDA Blackwell 平台量產良率優於預期，帶動整體供應鏈情緒回溫。記憶體族群受庫存週期影響，HBM 需求強勁但 DRAM 消費型去化仍需時間。政策面需關注美中出口管制進展，ASML EUV 設備交付時程為中長線關鍵變數。</div>
       <div class="ai-signals" id="ai-signals">
-        <!-- JS rendered -->
+        <div class="signal-chip"><div class="sig-dot" style="background:var(--up);"></div>台積電突破月線壓力，外資連買 3 日</div>
+        <div class="signal-chip"><div class="sig-dot" style="background:var(--up);"></div>NVDA Blackwell 法說前機構上調目標價至 $1,200</div>
+        <div class="signal-chip"><div class="sig-dot" style="background:var(--warn);"></div>記憶體庫存去化進度未如預期，DRAM 觀望</div>
+        <div class="signal-chip"><div class="sig-dot" style="background:var(--dn);"></div>美中科技戰升溫，中概供應鏈留意下行風險</div>
       </div>
     </div>
 
-    <!-- Bottom row: heatmap + forex + watchlist manage -->
-    <div class="bottom-grid fade-up delay-5">
-
-      <!-- Heatmap -->
+    <!-- Bottom -->
+    <div class="bottom-grid">
       <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">類股熱力圖</div>
-          <span class="text-sm text-muted">費城半導體成份</span>
-        </div>
-        <div class="panel-body">
-          <div class="heatmap-grid" id="heatmap-grid">
-            <!-- JS rendered -->
-          </div>
-        </div>
+        <div class="panel-header"><div class="panel-title">類股熱力圖</div><span class="text-sm text-muted">費城半導體成份</span></div>
+        <div class="panel-body"><div class="heatmap-grid" id="heatmap-grid"><div class="loading-overlay"><div class="spinner"></div></div></div></div>
       </div>
-
-      <!-- Forex + indices extras -->
       <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">匯率 · 商品</div>
-        </div>
-        <div class="panel-body">
-          <div id="forex-list"><!-- JS rendered --></div>
+        <div class="panel-header"><div class="panel-title">匯率 · 商品</div></div>
+        <div class="panel-body"><div id="forex-list"><div class="loading-overlay"><div class="spinner"></div></div></div>
           <div class="section-divider"></div>
           <div class="panel-title" style="margin-bottom:10px;">VIX 恐慌指數</div>
-          <div style="display:flex; align-items:baseline; gap:10px;">
-            <div style="font-family:var(--mono); font-size:28px; font-weight:600; color: var(--warn);">18.42</div>
-            <div style="font-family:var(--mono); font-size:12px; color: var(--dn);">▲ +1.23</div>
+          <div style="display:flex;align-items:baseline;gap:10px;">
+            <div style="font-family:var(--mono);font-size:28px;font-weight:600;color:var(--warn);" id="vix-val">--</div>
+            <div style="font-family:var(--mono);font-size:12px;color:var(--text2);" id="vix-chg"></div>
           </div>
-          <div style="font-size:10px; color: var(--text2); margin-top:4px;">市場情緒偏緊張，注意波動</div>
-          <div style="height:4px; background:var(--bg3); border-radius:2px; margin-top:8px; overflow:hidden;">
-            <div style="width:32%; height:100%; background: var(--warn); border-radius:2px;"></div>
-          </div>
-          <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text2); margin-top:3px;">
-            <span>極度貪婪 10</span><span>極度恐慌 80</span>
-          </div>
+          <div style="font-size:10px;color:var(--text2);margin-top:4px;" id="vix-label">載入中...</div>
         </div>
       </div>
-
-      <!-- Watchlist manage -->
       <div class="panel">
         <div class="panel-header">
           <div class="panel-title">自選股管理</div>
-          <button class="btn btn-primary" style="padding:4px 12px; font-size:10px;" onclick="openModal()">＋ 新增</button>
+          <button class="btn btn-primary" style="padding:4px 12px;font-size:10px;" onclick="openModal()">＋ 新增</button>
         </div>
-        <div class="panel-body" style="max-height:280px; overflow-y:auto;">
-          <div id="wl-manage-list">
-            <!-- JS rendered -->
-          </div>
-        </div>
+        <div class="panel-body" style="max-height:280px;overflow-y:auto;"><div id="wl-manage-list"></div></div>
       </div>
-
     </div>
-
   </main>
 </div>
 
-<!-- ── ADD STOCK MODAL ── -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal">
     <div class="modal-title">新增追蹤股票</div>
-    <input class="modal-search" type="text" placeholder="搜尋股票代碼或名稱..." id="stock-search" oninput="filterSuggestions(this.value)" />
-    <div class="suggest-list" id="suggest-list">
-      <!-- JS rendered -->
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal()">關閉</button>
-    </div>
+    <input class="modal-search" type="text" id="stock-search" placeholder="搜尋股票代碼或名稱..." oninput="filterSuggestions(this.value)"/>
+    <div class="suggest-list" id="suggest-list"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">關閉</button></div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════
+// ── STATIC STOCK METADATA (prices come from API) ──
+const STOCK_META = {
+  '2330.TW': { name:'台積電', nameEn:'TSMC', market:'tw', sector:'晶圓代工' },
+  '2303.TW': { name:'聯電', nameEn:'UMC', market:'tw', sector:'晶圓代工' },
+  '2454.TW': { name:'聯發科', nameEn:'MediaTek', market:'tw', sector:'IC設計' },
+  '2408.TW': { name:'南亞科', nameEn:'Nanya Tech', market:'tw', sector:'記憶體' },
+  '2379.TW': { name:'瑞昱', nameEn:'Realtek', market:'tw', sector:'IC設計' },
+  '3711.TW': { name:'日月光', nameEn:'ASE Group', market:'tw', sector:'封測' },
+  '2337.TW': { name:'旺宏', nameEn:'Macronix', market:'tw', sector:'記憶體' },
+  '3034.TW': { name:'聯詠', nameEn:'Novatek', market:'tw', sector:'IC設計' },
+  'NVDA':    { name:'輝達', nameEn:'NVIDIA', market:'us', sector:'GPU/AI' },
+  'AMD':     { name:'超微', nameEn:'AMD', market:'us', sector:'CPU/GPU' },
+  'INTC':    { name:'英特爾', nameEn:'Intel', market:'us', sector:'CPU' },
+  'ASML':    { name:'艾司摩爾', nameEn:'ASML', market:'us', sector:'半導體設備' },
+  'AMAT':    { name:'應用材料', nameEn:'Applied Materials', market:'us', sector:'半導體設備' },
+  'LRCX':    { name:'拉姆研究', nameEn:'Lam Research', market:'us', sector:'半導體設備' },
+  'MU':      { name:'美光', nameEn:'Micron', market:'us', sector:'記憶體' },
+  'QCOM':    { name:'高通', nameEn:'Qualcomm', market:'us', sector:'IC設計' },
+  'TSM':     { name:'台積電ADR', nameEn:'TSMC ADR', market:'us', sector:'晶圓代工' },
+  'KLAC':    { name:'科磊', nameEn:'KLA Corp', market:'us', sector:'半導體設備' },
+};
 
-const ALL_STOCKS = [
-  // 台股 - 主要半導體
-  { ticker:'2330', name:'台積電', nameEn:'TSMC', market:'tw', price:940, chg:12, chgPct:1.29, vol:'45.2億', sector:'晶圓代工', spark:[22,20,24,18,14,10,8,4] },
-  { ticker:'2303', name:'聯電', nameEn:'UMC', market:'tw', price:54.6, chg:-0.8, chgPct:-1.44, vol:'18.7億', sector:'晶圓代工', spark:[6,10,8,14,16,20,22,24] },
-  { ticker:'2454', name:'聯發科', nameEn:'MediaTek', market:'tw', price:1285, chg:35, chgPct:2.80, vol:'22.1億', sector:'IC設計', spark:[18,16,14,12,10,8,6,4] },
-  { ticker:'2408', name:'南亞科', nameEn:'Nanya Tech', market:'tw', price:64.3, chg:-1.2, chgPct:-1.83, vol:'8.3億', sector:'記憶體', spark:[8,10,12,14,16,18,20,22] },
-  { ticker:'2379', name:'瑞昱', nameEn:'Realtek', market:'tw', price:520, chg:8, chgPct:1.56, vol:'5.1億', sector:'IC設計', spark:[20,18,16,14,12,10,8,6] },
-  { ticker:'3711', name:'日月光', nameEn:'ASE Group', market:'tw', price:142, chg:2.5, chgPct:1.79, vol:'12.4億', sector:'封測', spark:[16,14,12,10,8,6,4,2] },
-  { ticker:'2337', name:'旺宏', nameEn:'Macronix', market:'tw', price:68.2, chg:1.1, chgPct:1.64, vol:'4.8億', sector:'記憶體', spark:[14,12,10,8,6,5,4,3] },
-  { ticker:'3034', name:'聯詠', nameEn:'Novatek', market:'tw', price:395, chg:-5, chgPct:-1.25, vol:'7.2億', sector:'IC設計', spark:[4,6,8,10,12,14,16,18] },
-  // 美股 - 主要半導體
-  { ticker:'NVDA', name:'輝達', nameEn:'NVIDIA', market:'us', price:1087, chg:23.4, chgPct:2.20, vol:'$42.1B', sector:'GPU/AI', spark:[24,20,16,18,12,6,2,1] },
-  { ticker:'AMD', name:'超微', nameEn:'AMD', market:'us', price:178.5, chg:4.2, chgPct:2.41, vol:'$8.4B', sector:'CPU/GPU', spark:[18,16,14,12,10,8,6,4] },
-  { ticker:'INTC', name:'英特爾', nameEn:'Intel', market:'us', price:30.8, chg:-0.5, chgPct:-1.60, vol:'$5.2B', sector:'CPU', spark:[6,8,10,12,14,16,18,20] },
-  { ticker:'ASML', name:'艾司摩爾', nameEn:'ASML', market:'us', price:875, chg:12, chgPct:1.39, vol:'$4.8B', sector:'半導體設備', spark:[20,18,16,12,10,8,6,4] },
-  { ticker:'AMAT', name:'應用材料', nameEn:'Applied Materials', market:'us', price:212, chg:3.1, chgPct:1.48, vol:'$6.1B', sector:'半導體設備', spark:[18,16,14,10,8,6,4,2] },
-  { ticker:'LRCX', name:'拉姆研究', nameEn:'Lam Research', market:'us', price:920, chg:-8, chgPct:-0.86, vol:'$3.2B', sector:'半導體設備', spark:[4,6,8,10,12,14,16,18] },
-  { ticker:'MU', name:'美光', nameEn:'Micron', market:'us', price:128, chg:-2.1, chgPct:-1.61, vol:'$7.3B', sector:'記憶體', spark:[6,8,10,12,14,16,18,20] },
-  { ticker:'QCOM', name:'高通', nameEn:'Qualcomm', market:'us', price:165, chg:2.8, chgPct:1.73, vol:'$5.6B', sector:'IC設計', spark:[16,14,12,10,8,6,4,2] },
-  { ticker:'TSM', name:'台積電ADR', nameEn:'TSMC ADR', market:'us', price:148, chg:2.1, chgPct:1.44, vol:'$9.8B', sector:'晶圓代工', spark:[20,18,14,10,8,6,4,2] },
-  { ticker:'KLAC', name:'科磊', nameEn:'KLA Corp', market:'us', price:680, chg:5.4, chgPct:0.80, vol:'$2.1B', sector:'半導體設備', spark:[14,12,10,8,6,5,4,3] },
-];
+const INDEX_META = {
+  '^TWII':     { name:'台灣加權' },
+  '^SOX':      { name:'費城半導體' },
+  '^IXIC':     { name:'那斯達克' },
+  '^GSPC':     { name:'S&P 500' },
+  '000001.SS': { name:'上證指數' },
+};
 
-const DEFAULT_WATCHLIST = ['2330','NVDA','2454','AMD','ASML','2303','MU','TSM'];
+const FOREX_META = {
+  'TWD=X':    { name:'USD/TWD' },
+  'JPY=X':    { name:'USD/JPY' },
+  'EURUSD=X': { name:'EUR/USD' },
+  'GC=F':     { name:'黃金 XAU/USD' },
+  'CL=F':     { name:'WTI 原油' },
+};
 
 const NEWS_DATA = [
   { title:'輝達 Blackwell B200 量產良率超預期，台積電 CoWoS 月產能目標上調至 3.5 萬片', tags:['ai','supply'], source:'Reuters', time:'1小時前', url:'#' },
-  { title:'ASML 宣布 2026 年 High-NA EUV 出貨量提升至 20 台，三星、英特爾列優先客戶', tags:['supply','earnings'], source:'Bloomberg', time:'3小時前', url:'#' },
+  { title:'ASML 宣布 2026 年 High-NA EUV 出貨量提升，三星、英特爾列優先客戶', tags:['supply','earnings'], source:'Bloomberg', time:'3小時前', url:'#' },
   { title:'美商務部擴大對中出口管制範圍：14nm 以下製程設備納入限制清單', tags:['policy'], source:'WSJ', time:'5小時前', url:'#' },
   { title:'台積電法說會：2024 全年營收預計成長逾 25%，AI 相關營收佔比達三成', tags:['earnings','ai'], source:'工商時報', time:'6小時前', url:'#' },
   { title:'SK海力士 HBM3E 12層堆疊量產，供貨 NVIDIA H200 GPU', tags:['memory','supply'], source:'Korea Times', time:'8小時前', url:'#' },
@@ -598,131 +460,191 @@ const NEWS_DATA = [
   { title:'日本半導體補貼計畫追加 1.5 兆日圓，Rapidus 2nm 試產進程加速', tags:['policy','supply'], source:'日本経済新聞', time:'14小時前', url:'#' },
 ];
 
-const INDEX_DATA = [
-  { name:'台灣加權', val:'21,840', chg:'+248', pct:'+1.15%', up:true, spark:[14,12,10,8,7,5,3,1] },
-  { name:'費城半導體', val:'4,892', chg:'+86', pct:'+1.79%', up:true, spark:[12,10,8,6,5,3,2,1] },
-  { name:'那斯達克', val:'18,250', chg:'+124', pct:'+0.68%', up:true, spark:[10,8,6,8,5,4,3,2] },
-  { name:'S&P 500', val:'5,127', chg:'+18', pct:'+0.35%', up:true, spark:[12,11,10,9,8,7,5,3] },
-  { name:'上證指數', val:'3,048', chg:'-22', pct:'-0.72%', up:false, spark:[4,6,8,10,12,14,16,18] },
-];
-
-const FOREX_DATA = [
-  { pair:'USD/TWD', val:'32.18', chg:'+0.08', up:false },
-  { pair:'USD/JPY', val:'153.40', chg:'+0.62', up:false },
-  { pair:'EUR/USD', val:'1.0834', chg:'+0.0021', up:true },
-  { pair:'黃金 XAU/USD', val:'$2,318', chg:'+12', up:true },
-  { pair:'WTI 原油', val:'$83.42', chg:'-0.38', up:false },
-];
-
-const HEATMAP_DATA = [
-  { ticker:'NVDA', name:'輝達', pct:2.2, cls:'h-up3' },
-  { ticker:'TSM', name:'台積電', pct:1.9, cls:'h-up3' },
-  { ticker:'AMAT', name:'應材', pct:1.5, cls:'h-up2' },
-  { ticker:'ASML', name:'艾司摩爾', pct:1.4, cls:'h-up2' },
-  { ticker:'QCOM', name:'高通', pct:0.8, cls:'h-up1' },
-  { ticker:'KLAC', name:'科磊', pct:0.5, cls:'h-up1' },
-  { ticker:'AMD', name:'超微', pct:0.3, cls:'h-up1' },
-  { ticker:'LRCX', name:'拉姆', pct:-0.4, cls:'h-dn1' },
-  { ticker:'MU', name:'美光', pct:-1.2, cls:'h-dn2' },
-  { ticker:'INTC', name:'英特爾', pct:-1.6, cls:'h-dn2' },
-  { ticker:'2303', name:'聯電', pct:-0.7, cls:'h-dn1' },
-  { ticker:'2408', name:'南亞科', pct:-1.8, cls:'h-dn2' },
-];
-
-const SIGNALS = [
-  { color:'#00e676', text:'台積電突破月線壓力，外資連買 3 日' },
-  { color:'#00e676', text:'NVDA Blackwell 法說前機構上調目標價至 $1,200' },
-  { color:'#ffd740', text:'記憶體庫存去化進度未如預期，DRAM 觀望' },
-  { color:'#ff5252', text:'美中科技戰升溫，中概供應鏈留意下行風險' },
-];
-
-// ═══════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════
-
-let watchlist = [...DEFAULT_WATCHLIST];
+// ── STATE ──
+let liveData = { tw:[], us:[], indices:[], forex:[] };
+let watchlist = JSON.parse(localStorage.getItem('chip_watchlist') || '["2330.TW","NVDA","2454.TW","AMD","ASML","2303.TW","MU","TSM"]');
 let currentMarketFilter = 'all';
 let currentNewsFilter = 'all';
-let editMode = false;
 
-// ═══════════════════════════════════════════
-// RENDER FUNCTIONS
-// ═══════════════════════════════════════════
-
-function sparkPath(data, w, h) {
-  const min = Math.min(...data), max = Math.max(...data);
-  const range = max - min || 1;
-  const pts = data.map((v, i) => {
-    const x = (i / (data.length - 1)) * w;
-    const y = h - ((v - min) / range) * h;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
-  return pts.join(' ');
+// ── FETCH ──
+async function fetchAll() {
+  document.getElementById('error-box').style.display = 'none';
+  try {
+    const res = await fetch('/api/quotes');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    liveData = data;
+    document.getElementById('last-update').textContent = new Date(data.updatedAt).toLocaleTimeString('zh-TW', { hour:'2-digit', minute:'2-digit' });
+    renderAll();
+  } catch (e) {
+    document.getElementById('error-box').style.display = 'flex';
+    // Still render with whatever we have (or empty)
+    renderAll();
+  }
 }
 
+// ── HELPERS ──
+function fmt(price, market) {
+  if (price == null) return '--';
+  if (market === 'tw') return price.toFixed(2);
+  if (price >= 1000) return price.toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
+  return price.toFixed(2);
+}
+function heatClass(pct) {
+  if (pct >= 3) return 'h-up3';
+  if (pct >= 1.5) return 'h-up2';
+  if (pct > 0) return 'h-up1';
+  if (pct === 0) return 'h-n';
+  if (pct >= -1.5) return 'h-dn1';
+  if (pct >= -3) return 'h-dn2';
+  return 'h-dn3';
+}
+
+// ── RENDER ──
 function renderIndexBar() {
   const el = document.getElementById('index-bar');
-  el.innerHTML = INDEX_DATA.map(idx => `
-    <div class="idx-cell">
-      <div class="idx-name">${idx.name}</div>
-      <div class="idx-val">${idx.val}</div>
-      <div class="idx-chg ${idx.up ? 'up' : 'dn'}">${idx.chg} (${idx.pct})</div>
-      <svg class="idx-sparkline" width="100%" height="24" viewBox="0 0 100 24" preserveAspectRatio="none">
-        <polyline points="${sparkPath(idx.spark, 100, 24)}" fill="none"
-          stroke="${idx.up ? 'var(--up)' : 'var(--dn)'}" stroke-width="1.5" stroke-linejoin="round"/>
-      </svg>
-    </div>
-  `).join('');
+  const items = liveData.indices;
+  if (!items || items.length === 0) return;
+  el.innerHTML = items.map(idx => {
+    const meta = INDEX_META[idx.ticker] || { name: idx.ticker };
+    const isUp = idx.chg >= 0;
+    const pctStr = idx.chgPct != null ? `${isUp?'+':''}${idx.chgPct.toFixed(2)}%` : '';
+    const chgStr = idx.chg != null ? `${isUp?'+':''}${idx.chg.toFixed(2)}` : '';
+    return `
+      <div class="idx-cell">
+        <div class="idx-name">${meta.name}</div>
+        <div class="idx-val">${idx.price != null ? idx.price.toLocaleString('en-US', {maximumFractionDigits:2}) : '--'}</div>
+        <div class="idx-chg ${isUp?'up':'dn'}">${chgStr} (${pctStr})</div>
+      </div>`;
+  }).join('');
 }
 
 function renderStocks() {
   const el = document.getElementById('stocks-grid');
-  let stocks = ALL_STOCKS;
-  if (currentMarketFilter === 'tw') stocks = stocks.filter(s => s.market === 'tw');
-  else if (currentMarketFilter === 'us') stocks = stocks.filter(s => s.market === 'us');
-  else if (currentMarketFilter === 'watchlist') stocks = stocks.filter(s => watchlist.includes(s.ticker));
+  let all = [...liveData.tw, ...liveData.us].map(s => ({
+    ...s,
+    ...(STOCK_META[s.ticker] || { name: s.name || s.ticker, market: s.ticker.includes('.TW') ? 'tw' : 'us', sector: '--' })
+  }));
+  if (currentMarketFilter === 'tw') all = all.filter(s => s.market === 'tw');
+  else if (currentMarketFilter === 'us') all = all.filter(s => s.market === 'us');
+  else if (currentMarketFilter === 'watchlist') all = all.filter(s => watchlist.includes(s.ticker));
 
-  el.innerHTML = stocks.map(s => {
-    const isUp = s.chg >= 0;
-    const cls = isUp ? 'up-card' : 'dn-card';
-    const mktTag = s.market === 'tw' ? '<span class="card-tag tag-tw">台股</span>' : '<span class="card-tag tag-us">美股</span>';
-    const sparkPts = sparkPath(s.spark, 100, 28);
-    const inWL = watchlist.includes(s.ticker);
+  if (all.length === 0) {
+    el.innerHTML = '<div style="grid-column:span 3;padding:30px 0;text-align:center;color:var(--text2);">尚無資料</div>';
+    return;
+  }
+
+  el.innerHTML = all.map(s => {
+    const isUp = (s.chg || 0) >= 0;
+    const mktTag = s.market === 'tw'
+      ? '<span class="card-tag tag-tw">台股</span>'
+      : '<span class="card-tag tag-us">美股</span>';
+    const prefix = s.market === 'us' ? '$' : '';
     return `
-      <div class="stock-card ${cls}" title="${s.nameEn} - ${s.sector}">
+      <div class="stock-card ${isUp?'up-card':'dn-card'}">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
           ${mktTag}
-          <span style="font-size:9px;color:var(--text2);">${s.sector}</span>
+          <span style="font-size:9px;color:var(--text2);">${s.sector||''}</span>
         </div>
         <div class="card-ticker">${s.ticker}</div>
         <div class="card-name">${s.name}</div>
-        <div class="card-price">${s.market === 'tw' ? '' : '$'}${s.price.toLocaleString()}</div>
-        <div class="card-change ${isUp ? 'up' : 'dn'}">
-          ${isUp ? '▲' : '▼'} ${Math.abs(s.chg).toFixed(2)} (${isUp ? '+' : ''}${s.chgPct.toFixed(2)}%)
+        <div class="card-price">${prefix}${fmt(s.price, s.market)}</div>
+        <div class="card-change ${isUp?'up':'dn'}">
+          ${isUp?'▲':'▼'} ${s.chg!=null?Math.abs(s.chg).toFixed(2):'--'}
+          (${s.chgPct!=null?(isUp?'+':'')+s.chgPct.toFixed(2)+'%':'--'})
         </div>
-        <div class="card-vol">成交額：${s.vol}</div>
-        <svg class="card-spark" width="100%" height="28" viewBox="0 0 100 28" preserveAspectRatio="none">
-          <polyline points="${sparkPts}" fill="none"
-            stroke="${isUp ? 'var(--up)' : 'var(--dn)'}" stroke-width="1.5" stroke-linejoin="round"/>
-        </svg>
-      </div>
-    `;
+      </div>`;
+  }).join('');
+}
+
+function renderHeatmap() {
+  const el = document.getElementById('heatmap-grid');
+  const all = [...liveData.tw, ...liveData.us];
+  if (all.length === 0) return;
+  const sorted = [...all].sort((a,b) => (b.chgPct||0) - (a.chgPct||0));
+  el.innerHTML = sorted.slice(0, 12).map(s => {
+    const cls = heatClass(s.chgPct || 0);
+    const meta = STOCK_META[s.ticker] || {};
+    const shortName = meta.name || s.ticker;
+    const displayTicker = s.ticker.replace('.TW','');
+    return `
+      <div class="heat-cell ${cls}">
+        <div class="heat-ticker">${displayTicker}</div>
+        <div style="font-size:9px;margin:1px 0;opacity:0.7;">${shortName}</div>
+        <div class="heat-pct">${s.chgPct!=null?(s.chgPct>=0?'+':'')+s.chgPct.toFixed(1)+'%':'--'}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderForex() {
+  const el = document.getElementById('forex-list');
+  if (!liveData.forex || liveData.forex.length === 0) return;
+  el.innerHTML = liveData.forex.map(f => {
+    const meta = FOREX_META[f.ticker] || { name: f.ticker };
+    const isUp = (f.chg||0) >= 0;
+    return `
+      <div class="forex-row">
+        <span class="forex-pair">${meta.name}</span>
+        <span class="forex-val ${isUp?'up':'dn'}">${fmt(f.price)}
+          <span style="font-size:10px;margin-left:4px;">${isUp?'▲':'▼'} ${f.chg!=null?Math.abs(f.chg).toFixed(2):'--'}</span>
+        </span>
+      </div>`;
+  }).join('');
+}
+
+function renderSidebar() {
+  const el = document.getElementById('sidebar-watchlist');
+  const all = [...liveData.tw, ...liveData.us];
+  const wlStocks = watchlist.map(t => all.find(s => s.ticker === t)).filter(Boolean);
+  if (wlStocks.length === 0) {
+    el.innerHTML = '<div style="padding:8px 6px;font-size:11px;color:var(--text2);">尚未新增自選股</div>';
+    return;
+  }
+  el.innerHTML = wlStocks.map(s => {
+    const meta = STOCK_META[s.ticker] || {};
+    const isUp = (s.chg||0) >= 0;
+    return `
+      <div class="wl-row">
+        <div>
+          <div class="wl-ticker">${s.ticker.replace('.TW','')}</div>
+          <div class="wl-name">${meta.name || s.name}</div>
+        </div>
+        <div class="wl-pct ${isUp?'up':'dn'}">${s.chgPct!=null?(isUp?'+':'')+s.chgPct.toFixed(2)+'%':'--'}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderWatchlistManage() {
+  const el = document.getElementById('wl-manage-list');
+  if (watchlist.length === 0) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:12px;padding:8px 0;">尚未新增任何股票</div>';
+    return;
+  }
+  const all = [...liveData.tw, ...liveData.us];
+  el.innerHTML = watchlist.map(t => {
+    const meta = STOCK_META[t] || {};
+    const live = all.find(s => s.ticker === t);
+    const isUp = live && (live.chg||0) >= 0;
+    return `
+      <div class="wl-manage-item">
+        <span style="color:var(--text2);font-size:14px;cursor:grab;">⠿</span>
+        <span class="wl-mi-ticker">${t.replace('.TW','')}</span>
+        <span class="wl-mi-name">${meta.name || t}</span>
+        ${live ? `<span style="font-family:var(--mono);font-size:11px;${isUp?'color:var(--up)':'color:var(--dn)'};">${isUp?'+':''}${live.chgPct?.toFixed(2)}%</span>` : ''}
+        <button class="wl-mi-del" onclick="removeFromWatchlist('${t}')">✕</button>
+      </div>`;
   }).join('');
 }
 
 function renderNews() {
   const el = document.getElementById('news-list');
   const tagMap = {
-    ai: ['ntag-ai', 'AI晶片'],
-    supply: ['ntag-supply', '供應鏈'],
-    policy: ['ntag-policy', '政策'],
-    earnings: ['ntag-earnings', '法說'],
-    memory: ['ntag-memory', '記憶體'],
-    foundry: ['ntag-foundry', '晶圓代工'],
+    ai:['ntag-ai','AI晶片'], supply:['ntag-supply','供應鏈'],
+    policy:['ntag-policy','政策'], earnings:['ntag-earnings','法說'],
+    memory:['ntag-memory','記憶體'], foundry:['ntag-foundry','晶圓代工'],
   };
   let news = NEWS_DATA;
   if (currentNewsFilter !== 'all') news = news.filter(n => n.tags.includes(currentNewsFilter));
-
   el.innerHTML = news.map(n => {
     const tagsHtml = n.tags.map(t => {
       const [cls, label] = tagMap[t] || ['ntag-ai', t];
@@ -732,201 +654,97 @@ function renderNews() {
       <div class="news-item" onclick="window.open('${n.url}','_blank')">
         <div class="news-tags">${tagsHtml}</div>
         <div class="news-title">${n.title}</div>
-        <div class="news-meta">
-          <span>${n.source}</span><span>${n.time}</span>
-        </div>
-      </div>
-    `;
+        <div class="news-meta"><span>${n.source}</span><span>${n.time}</span></div>
+      </div>`;
   }).join('');
 }
 
-function renderHeatmap() {
-  const el = document.getElementById('heatmap-grid');
-  el.innerHTML = HEATMAP_DATA.map(h => `
-    <div class="heat-cell ${h.cls}">
-      <div class="heat-ticker">${h.ticker}</div>
-      <div class="heat-name">${h.name}</div>
-      <div class="heat-pct">${h.pct > 0 ? '+' : ''}${h.pct.toFixed(1)}%</div>
-    </div>
-  `).join('');
-}
-
-function renderForex() {
-  const el = document.getElementById('forex-list');
-  el.innerHTML = FOREX_DATA.map(f => `
-    <div class="forex-row">
-      <span class="forex-pair">${f.pair}</span>
-      <span class="forex-val ${f.up ? 'up' : 'dn'}">${f.val}
-        <span style="font-size:10px; margin-left:4px;">${f.up ? '▲' : '▼'} ${f.chg}</span>
-      </span>
-    </div>
-  `).join('');
-}
-
-function renderSidebar() {
-  const el = document.getElementById('sidebar-watchlist');
-  const wlStocks = watchlist.map(t => ALL_STOCKS.find(s => s.ticker === t)).filter(Boolean);
-  el.innerHTML = wlStocks.map(s => {
-    const isUp = s.chg >= 0;
-    return `
-      <div class="wl-row" onclick="scrollToStock('${s.ticker}')">
-        <div>
-          <div class="wl-ticker">${s.ticker}</div>
-          <div class="wl-name">${s.name}</div>
-        </div>
-        <div class="wl-pct ${isUp ? 'up' : 'dn'}">${isUp ? '+' : ''}${s.chgPct.toFixed(2)}%</div>
-      </div>
-    `;
-  }).join('');
-}
-
-function renderWatchlistManage() {
-  const el = document.getElementById('wl-manage-list');
-  const wlStocks = watchlist.map(t => ALL_STOCKS.find(s => s.ticker === t)).filter(Boolean);
-  if (wlStocks.length === 0) {
-    el.innerHTML = '<div style="color:var(--text2); font-size:12px; padding:8px 0;">尚未新增任何股票</div>';
+function renderSuggestList(q = '') {
+  const el = document.getElementById('suggest-list');
+  const query = q.toLowerCase();
+  const entries = Object.entries(STOCK_META).filter(([ticker, m]) =>
+    !query || ticker.toLowerCase().includes(query) || m.name.includes(query) || m.nameEn.toLowerCase().includes(query)
+  );
+  if (entries.length === 0) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:12px;padding:12px 10px;">查無符合股票</div>';
     return;
   }
-  el.innerHTML = wlStocks.map(s => `
-    <div class="wl-manage-item">
-      <span class="wl-drag">⠿</span>
-      <span class="wl-mi-ticker">${s.ticker}</span>
-      <span class="wl-mi-name">${s.name}</span>
-      <button class="wl-mi-del" onclick="removeFromWatchlist('${s.ticker}')" title="移除">✕</button>
-    </div>
-  `).join('');
-}
-
-function renderSignals() {
-  const el = document.getElementById('ai-signals');
-  el.innerHTML = SIGNALS.map(s => `
-    <div class="signal-chip">
-      <div class="sig-dot" style="background:${s.color};"></div>
-      <span>${s.text}</span>
-    </div>
-  `).join('');
-}
-
-function renderModal() {
-  renderSuggestList('');
-}
-
-function renderSuggestList(query) {
-  const el = document.getElementById('suggest-list');
-  const q = query.toLowerCase();
-  const filtered = ALL_STOCKS.filter(s =>
-    !q || s.ticker.toLowerCase().includes(q) || s.name.includes(q) || s.nameEn.toLowerCase().includes(q)
-  );
-  el.innerHTML = filtered.map(s => {
-    const inWL = watchlist.includes(s.ticker);
+  el.innerHTML = entries.map(([ticker, m]) => {
+    const inWL = watchlist.includes(ticker);
     return `
-      <div class="suggest-item" onclick="${inWL ? '' : `addToWatchlist('${s.ticker}')`}" style="${inWL ? 'opacity:0.5;cursor:default;' : ''}">
-        <span class="sug-ticker">${s.ticker}</span>
-        <span class="sug-name">${s.name} <span style="color:var(--text2);font-size:10px;">${s.nameEn}</span></span>
-        <span class="sug-mkt">${s.market === 'tw' ? '🇹🇼 台股' : '🇺🇸 美股'}</span>
+      <div class="suggest-item" onclick="${inWL ? '' : `addToWatchlist('${ticker}')`}" style="${inWL?'opacity:0.5;cursor:default;':''}">
+        <span class="sug-ticker">${ticker.replace('.TW','')}</span>
+        <span class="sug-name">${m.name} <span style="color:var(--text2);font-size:10px;">${m.nameEn}</span></span>
+        <span class="sug-mkt">${m.market==='tw'?'🇹🇼 台股':'🇺🇸 美股'}</span>
         ${inWL ? '<span class="sug-added">已追蹤</span>' : ''}
-      </div>
-    `;
+      </div>`;
   }).join('');
-  if (filtered.length === 0) {
-    el.innerHTML = '<div style="color:var(--text2);font-size:12px;padding:12px 10px;">查無符合股票。可至設定新增自訂代碼。</div>';
-  }
 }
 
-// ═══════════════════════════════════════════
-// ACTIONS
-// ═══════════════════════════════════════════
+function renderAll() {
+  renderIndexBar();
+  renderStocks();
+  renderHeatmap();
+  renderForex();
+  renderSidebar();
+  renderWatchlistManage();
+  renderNews();
+}
 
+// ── ACTIONS ──
 function filterMarket(f, btn) {
   currentMarketFilter = f;
   document.querySelectorAll('#market-tabs .ftab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderStocks();
 }
-
 function filterNews(f, btn) {
   currentNewsFilter = f;
   document.querySelectorAll('#news-tabs .ftab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderNews();
 }
-
 function addToWatchlist(ticker) {
   if (!watchlist.includes(ticker)) {
     watchlist.push(ticker);
-    renderAll();
+    localStorage.setItem('chip_watchlist', JSON.stringify(watchlist));
+    renderSidebar(); renderWatchlistManage();
     renderSuggestList(document.getElementById('stock-search').value);
   }
 }
-
 function removeFromWatchlist(ticker) {
   watchlist = watchlist.filter(t => t !== ticker);
-  renderAll();
+  localStorage.setItem('chip_watchlist', JSON.stringify(watchlist));
+  renderSidebar(); renderWatchlistManage();
 }
-
 function toggleEditMode() {
-  editMode = !editMode;
-  document.getElementById('edit-toggle').textContent = editMode ? '完成' : '編輯';
+  const t = document.getElementById('edit-toggle');
+  t.textContent = t.textContent === '編輯' ? '完成' : '編輯';
 }
-
 function openModal() {
   document.getElementById('modal-overlay').classList.add('open');
   document.getElementById('stock-search').value = '';
   renderSuggestList('');
   setTimeout(() => document.getElementById('stock-search').focus(), 100);
 }
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target.id === 'modal-overlay') closeModal(); }
+function filterSuggestions(v) { renderSuggestList(v); }
 
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
-
-function closeModalOutside(e) {
-  if (e.target === document.getElementById('modal-overlay')) closeModal();
-}
-
-function filterSuggestions(val) {
-  renderSuggestList(val);
-}
-
-function navigate(page) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-  const titles = { dashboard:'今日總覽', news:'新聞中心', heatmap:'類股熱力圖', calendar:'法說行事曆' };
-  document.getElementById('page-title').textContent = titles[page] || '今日總覽';
-}
-
-function scrollToStock(ticker) { /* future: scroll to card */ }
-
-// ═══════════════════════════════════════════
-// CLOCK + INIT
-// ═══════════════════════════════════════════
-
+// ── CLOCK ──
 function updateClock() {
   const now = new Date();
   document.getElementById('clock').textContent = now.toLocaleTimeString('zh-TW');
-  document.getElementById('last-update').textContent =
-    now.toLocaleDateString('zh-TW', { month:'numeric', day:'numeric' }) + ' 08:00';
   document.getElementById('page-subtitle').textContent =
     now.toLocaleDateString('zh-TW', { year:'numeric', month:'long', day:'numeric', weekday:'long' });
 }
 
-function renderAll() {
-  renderIndexBar();
-  renderStocks();
-  renderNews();
-  renderHeatmap();
-  renderForex();
-  renderSidebar();
-  renderWatchlistManage();
-  renderSignals();
-}
-
-renderAll();
+// ── INIT ──
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 updateClock();
 setInterval(updateClock, 1000);
-
-// Keyboard close modal
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+fetchAll();
+setInterval(fetchAll, 5 * 60 * 1000); // refresh every 5 minutes
 </script>
 </body>
 </html>
