@@ -126,7 +126,7 @@
 
   /* Index bar */
   .index-bar {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px;
     background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px;
   }
   .idx-cell { background: var(--bg1); padding: 14px 16px; cursor: pointer; transition: background 0.15s; }
@@ -319,7 +319,7 @@
 
     <!-- Index bar -->
     <div class="index-bar fade-up delay-1" id="index-bar">
-      <div class="idx-cell" style="grid-column:span 5;">
+      <div class="idx-cell" style="grid-column:span 6;">
         <div class="loading-overlay"><div class="spinner"></div><span>載入指數資料中...</span></div>
       </div>
     </div>
@@ -467,10 +467,11 @@ const STOCK_META = {
 };
 
 const INDEX_META = {
-  '^TWII':     { name:'台灣加權' },
-  '^SOX':      { name:'費城半導體' },
-  '^IXIC':     { name:'那斯達克' },
-  '^GSPC':     { name:'S&P 500' },
+  '^TWII': { name:'台灣加權' },
+  '^SOX':  { name:'費城半導體' },
+  '^IXIC': { name:'那斯達克' },
+  '^GSPC': { name:'S&P 500' },
+  '^DJI':  { name:'道瓊工業' },
   '000001.SS': { name:'上證指數' },
 };
 
@@ -542,8 +543,8 @@ function renderIndexBar() {
   const items = liveData.indices;
   if (!items || items.length === 0) return;
   el.innerHTML = items.map(idx => {
-    const meta = INDEX_META[idx.ticker] || { name: idx.ticker };
-    const isUp = idx.chg >= 0;
+    const meta = { name: idx.name || (INDEX_META[idx.ticker]||{}).name || idx.ticker };
+    const isUp = (idx.chg || 0) >= 0;
     const pctStr = idx.chgPct != null ? `${isUp?'+':''}${idx.chgPct.toFixed(2)}%` : '';
     const chgStr = idx.chg != null ? `${isUp?'+':''}${idx.chg.toFixed(2)}` : '';
     return `
