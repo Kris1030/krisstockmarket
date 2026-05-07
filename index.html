@@ -361,8 +361,10 @@
 
     <!-- AI Summary -->
     <div class="ai-summary-box fade-up delay-4">
-      <div class="ai-badge">◈ AI 每日市場摘要</div>
-      <div class="ai-text" id="ai-summary-text">今日半導體板塊整體偏多，費城半導體指數領漲科技股。AI 伺服器需求持續拉升先進封裝需求，台積電 CoWoS 與 SoIC 產能持續滿載。NVDA Blackwell 平台量產良率優於預期，帶動整體供應鏈情緒回溫。記憶體族群受庫存週期影響，HBM 需求強勁但 DRAM 消費型去化仍需時間。政策面需關注美中出口管制進展，ASML EUV 設備交付時程為中長線關鍵變數。</div>
+      <div class="ai-badge">◈ AI 每日市場摘要 <span style="font-size:8px;opacity:0.6;margin-left:6px;">由 Claude 自動生成</span></div>
+      <div class="ai-text" id="ai-summary-text" style="min-height:48px;">
+        <span style="color:var(--text2);">分析市場資料中...</span>
+      </div>
       <div class="ai-signals" id="ai-signals">
         <div class="signal-chip"><div class="sig-dot" style="background:var(--up);"></div>台積電突破月線壓力，外資連買 3 日</div>
         <div class="signal-chip"><div class="sig-dot" style="background:var(--up);"></div>NVDA Blackwell 法說前機構上調目標價至 $1,200</div>
@@ -492,10 +494,10 @@ let currentNewsFilter = 'all';
 async function fetchAll() {
   document.getElementById('error-box').style.display = 'none';
 
-  // Fetch quotes + news in parallel
-  const [quotesResult, newsResult] = await Promise.allSettled([
-    fetch('/api/quotes').then(r => r.ok ? r.json() : Promise.reject()),
-    fetch('/api/news').then(r => r.ok ? r.json() : Promise.reject()),
+  const [quotesResult, newsResult, summaryResult] = await Promise.allSettled([
+    fetch('/api/quotes').then(r => r.ok ? r.json() : Promise.reject('quotes failed')),
+    fetch('/api/news').then(r => r.ok ? r.json() : Promise.reject('news failed')),
+    fetch('/api/summary').then(r => r.ok ? r.json() : Promise.reject('summary failed')),
   ]);
 
   if (quotesResult.status === 'fulfilled') {
@@ -508,6 +510,10 @@ async function fetchAll() {
 
   if (newsResult.status === 'fulfilled' && newsResult.value.articles?.length) {
     NEWS_DATA = newsResult.value.articles;
+  }
+
+  if (summaryResult.status === 'fulfilled' && summaryResult.value.summary) {
+    document.getElementById('ai-summary-text').textContent = summaryResult.value.summary;
   }
 
   renderAll();
