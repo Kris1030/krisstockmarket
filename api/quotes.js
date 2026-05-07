@@ -67,14 +67,21 @@ export default async function handler(req, res) {
     );
   }
 
-  // Indices (Finnhub uses ^ prefix for indices)
-  const idxMap = { '^TWII':'TWII','^SOX':'SOX','^IXIC':'COMP','^GSPC':'SPX','^VIX':'VIX' };
-  for (const [yf, fh] of Object.entries(idxMap)) {
+  // Indices - Finnhub symbol mapping
+  const idxList = [
+    { yf:'^GSPC', fh:'SPX',  name:'S&P 500' },
+    { yf:'^IXIC', fh:'COMP', name:'那斯達克' },
+    { yf:'^DJI',  fh:'DJIA', name:'道瓊' },
+    { yf:'^SOX',  fh:'SOX',  name:'費城半導體' },
+    { yf:'^TWII', fh:'TWII', name:'台灣加權' },
+    { yf:'^VIX',  fh:'VIX',  name:'VIX 恐慌' },
+  ];
+  for (const idx of idxList) {
     tasks.push(
-      finnhubQuote(fh).then(q => {
+      finnhubQuote(idx.fh).then(q => {
         if (!q) return;
-        if (yf === '^VIX') result.vix = { ticker:yf, name:'VIX', ...q };
-        else result.indices.push({ ticker:yf, ...q });
+        if (idx.yf === '^VIX') result.vix = { ticker:idx.yf, name:idx.name, ...q };
+        else result.indices.push({ ticker:idx.yf, name:idx.name, ...q });
       }).catch(()=>{})
     );
   }
